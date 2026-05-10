@@ -3,7 +3,7 @@ services:
     name: refund-item-classification
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python app.py"
+    startCommand: "python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: MODEL_PATH
         value: "saved_model/product_classifier.pkl"
