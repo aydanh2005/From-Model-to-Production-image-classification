@@ -1,0 +1,42 @@
+databases:
+  - name: refund-db
+    databaseName: refund_db
+    user: refund_user
+    plan: free
+
+services:
+  - type: web
+    name: fashion-classifier-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python model/train.py
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  - type: cron
+    name: fashion-classifier-batch
+    runtime: python
+    schedule: "0 2 * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python batch_process/batch.py
+    envVars:
+      - key: API_URL
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: refund-db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: refund-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: refund-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: refund-db
+          property: password

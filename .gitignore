@@ -1,0 +1,14 @@
+venv
+model_data/fashion-mnist_train.csv
+model_data/fashion-mnist_test.csv
+model_data/.DS_Store
+__pycache__
+batch_process/processed/*
+batch_process/failed/*
+!batch_process/processed/.gitkeep
+!batch_process/failed/.gitkeep
+.pytest_cache/
+archive/*
+.DS_Store
+mlflow.db
+mlruns/*

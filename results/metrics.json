@@ -1,0 +1,11 @@
+{
+  "test_accuracy": 0.8821,
+  "macro_f1_score": 0.8804380084656082,
+  "weighted_f1_score": 0.880438008465608,
+  "training_images": 60000,
+  "test_images": 10000,
+  "classes": 10,
+  "model": "RandomForestClassifier",
+  "n_estimators": 50,
+  "random_state": 42
+}

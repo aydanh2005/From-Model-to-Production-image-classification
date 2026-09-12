@@ -1,0 +1,24 @@
+name: Nightly batch verification
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  verify-scheduled-system:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Verify model service and batch components
+        run: |
+          python -m pytest -q
+          python -m compileall -q api model batch_process
+          test -f render.yaml
+          grep -q 'schedule: "0 2 \* \* \*"' render.yaml
+
