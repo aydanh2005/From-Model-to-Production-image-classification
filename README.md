@@ -23,6 +23,10 @@ python3 model/train.py
 
 The trained model is saved to `saved_model/model.pkl`.
 
+If the full training or test CSV is missing, the script prints a prominent
+warning. Training on the bundled 22,500-row sample is useful for demonstrating
+the pipeline but does not reproduce the reported 60,000/10,000 evaluation.
+
 Evaluation evidence is saved to:
 
 ```text
@@ -234,6 +238,11 @@ cp model_data/fashion-mnist_test.csv batch_process/upload/
 `render.yaml` defines a PostgreSQL database, a FastAPI web service, and a cron
 job scheduled for `02:00` UTC. The web service loads the committed and evaluated
 `saved_model/model.pkl`; it does not retrain a different model during deployment.
+
+The publicly demonstrated Render service hosts the API. The PostgreSQL and
+nightly scheduler are fully runnable through Docker Compose; deploying those
+two components to Render requires creating the complete Blueprint from
+`render.yaml` and supplying the cron service's `API_URL`.
 
 In the Render cron service, set `API_URL` to the deployed prediction endpoint,
 for example:
