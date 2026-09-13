@@ -104,7 +104,7 @@ model = joblib.load(os.path.join(BASE_DIR, "saved_model", "model.pkl"))
 
 `batch_process/batch.py`:
 
-- Looks in `upload/` for CSV files
+- Looks in `batch_process/upload/` for CSV files, independent of the terminal's current directory
 - For each file, sends each row to `POST /predict` with the pixel data as JSON
 - Saves results to PostgreSQL (`predictions` table)
 - Runs automatically every night at 02:00 via the scheduler
@@ -114,7 +114,12 @@ To test manually, add a CSV to the upload folder:
 
 ```bash
 cp model_data/fashion-mnist_test.csv batch_process/upload/
+python3 batch_process/batch.py
 ```
+
+The manual batch requires PostgreSQL and the API to be running. Outside Docker,
+set `API_URL`, `DB_HOST`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` for those
+services. Docker Compose supplies these values automatically.
 
 ---
 
@@ -223,3 +228,32 @@ docker-compose up --build
 # 3. Drop CSV files into the upload folder to be processed
 cp model_data/fashion-mnist_test.csv batch_process/upload/
 ```
+
+### Option C — Render
+
+`render.yaml` defines a PostgreSQL database, a FastAPI web service, and a cron
+job scheduled for `02:00` UTC. The web service loads the committed and evaluated
+`saved_model/model.pkl`; it does not retrain a different model during deployment.
+
+In the Render cron service, set `API_URL` to the deployed prediction endpoint,
+for example:
+
+```text
+https://<your-render-service>.onrender.com/predict
+```
+
+Render injects the database connection values from the managed PostgreSQL
+service. The cron job processes CSV files present in `batch_process/upload/`.
+For a real production system, replace this prototype folder with durable object
+storage because Render service filesystems are ephemeral.
+
+## Reproducibility and Constraints
+
+- The saved Random Forest model requires `scikit-learn==1.7.2`, matching the
+  version used to train and validate it.
+- `saved_model/model.pkl` is about 69 MB: below GitHub's 100 MB hard limit but
+  large enough that Git LFS or object storage is preferable for future versions.
+- `/metrics` is in-memory prototype monitoring and resets when the API restarts.
+- Fashion-MNIST validates the classification pipeline but does not represent
+  real warehouse photographs; production use requires representative return-item
+  images, preprocessing, drift monitoring, and probability calibration.
