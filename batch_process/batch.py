@@ -5,9 +5,10 @@ import requests
 import psycopg2
 from datetime import datetime
 
-UPLOAD_FOLDER = "upload"
-PROCESSED_FOLDER = "processed"
-FAILED_FOLDER = "failed"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "upload")
+PROCESSED_FOLDER = os.path.join(BASE_DIR, "processed")
+FAILED_FOLDER = os.path.join(BASE_DIR, "failed")
 API_URL = os.getenv("API_URL", "http://api:8000/predict")
 
 
@@ -56,7 +57,7 @@ def run_batch():
 
     files = [f for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".csv")]
     if not files:
-        print("No CSV files found in upload/")
+        print(f"No CSV files found in {UPLOAD_FOLDER}")
         return
 
     conn = get_db()
