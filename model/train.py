@@ -11,6 +11,12 @@ train_file = (
     if os.path.exists("model_data/fashion-mnist_train.csv")
     else "model_data/fashion-mnist_train_sample.csv"
 )
+if train_file.endswith("_sample.csv"):
+    print(
+        "WARNING: Full Fashion-MNIST training CSV not found. "
+        "Training with the 22,500-row sample; this will not reproduce the "
+        "reported 60,000/10,000 evaluation."
+    )
 X_train = pd.read_csv(train_file)
 y_train = X_train.pop("label").values
 X_train = X_train.values / 255.0
@@ -51,7 +57,10 @@ if os.path.exists("model_data/fashion-mnist_test.csv"):
     print(f"Accuracy: {accuracy:.4f}")
     print(f"Macro F1: {report['macro avg']['f1-score']:.4f}")
 else:
-    print("Test CSV not found, skipping evaluation.")
+    print(
+        "WARNING: Test CSV not found. Evaluation is being skipped, so this "
+        "run does not reproduce the reported 88.21% accuracy."
+    )
 
 os.makedirs("saved_model", exist_ok=True)
 joblib.dump(model, "saved_model/model.pkl")
