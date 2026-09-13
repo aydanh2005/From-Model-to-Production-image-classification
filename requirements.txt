@@ -1,12 +1,13 @@
-pandas
+pandas>=2.2,<3.0
+# model.pkl was trained and validated with this exact scikit-learn version.
 scikit-learn==1.7.2
-joblib
-fastapi
-uvicorn
-requests
-psycopg2-binary
-matplotlib
-pydantic
-schedule
-pytest
-httpx
+joblib>=1.4,<2.0
+fastapi>=0.115,<1.0
+uvicorn>=0.30,<1.0
+requests>=2.32,<3.0
+psycopg2-binary>=2.9,<3.0
+matplotlib>=3.8,<4.0
+pydantic>=2.7,<3.0
+schedule>=1.2,<2.0
+pytest>=8.0,<10.0
+httpx>=0.27,<1.0
